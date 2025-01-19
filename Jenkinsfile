@@ -9,6 +9,11 @@ pipeline {
 
     stages {
         stage('Setup') {
+            agent {
+                docker {
+                    image 'python:3.9-slim'
+                }
+            }
             steps {
                 echo 'Setting up Python environment...'
                 sh 'python3 -m venv venv'
@@ -24,7 +29,7 @@ pipeline {
             }
             steps {
                 echo 'Installing dependencies...'
-                sh 'pip install -r requirements.txt'
+                sh './venv/bin/pip install -r requirements.txt'
             }
         }
         
@@ -36,7 +41,9 @@ pipeline {
             }
             steps {
                 echo 'Running unit tests...'
-                sh './venv/bin/pytest --junitxml=report.xml'
+                sh '''
+                  PYTHONPATH=$PYTHONPATH:$(pwd) ./venv/bin/pytest --junitxml=report.xml
+                '''
             }
         }
         
@@ -48,8 +55,9 @@ pipeline {
                 }
             }
             steps {
+                sh 'chmod +x ./jenkins/scripts/*'
                 sh './jenkins/scripts/deliver.sh'
-                echo 'Visit http://localhost:5000 to see your Flask application in action.'
+                echo 'Visit http://localhost:8000 to see your Flask application in action.'
                 echo 'Waiting for 60 seconds...'
                 sh 'sleep 60'
                 echo 'Stopping the application in Jenkins env...'
@@ -65,6 +73,7 @@ pipeline {
         
         stage('Deploy') {
             steps {
+                sh 'chmod +x ./jenkins/scripts/*'
                 echo 'Deploying Flask app to VPS...'
                 sh './jenkins/scripts/deploy-to-vps.sh'
             }

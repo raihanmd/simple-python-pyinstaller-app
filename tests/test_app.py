@@ -7,6 +7,6 @@ def client():
         yield client
 
 def test_hello(client):
-    response = client.get("/")
+    response = client.get("/python")
     assert response.status_code == 200
-    assert response.data == b"Hello, my name is Raihan!"
+    assert response.data == b"Hello, my name is Raihanmd now im learning from Dicoding!"
