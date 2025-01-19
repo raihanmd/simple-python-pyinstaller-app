@@ -55,6 +55,7 @@ pipeline {
             }
             steps {
                 sh 'chmod +x ./jenkins/scripts/*'
+                sh 'which python3'
                 sh './jenkins/scripts/deliver.sh'
                 echo 'Visit http://localhost:8000 to see your Flask application in action.'
                 echo 'Waiting for 60 seconds...'
