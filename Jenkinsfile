@@ -31,8 +31,10 @@ pipeline {
             steps {
                 echo 'Installing dependencies...'
                 sh './venv/bin/pip install -r requirements.txt'
+                sh './venv/bin/pip list'
             }
         }
+
         
         stage('Test') {
             agent {
