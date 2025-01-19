@@ -50,17 +50,18 @@ pipeline {
                 '''
             }
         }
-        
+
         stage('Delivery') {
             agent {
                 docker {
                     image 'python:3.9-slim'
-                    args '-v $WORKSPACE/venv:/app/venv'
-                    args '-p 8000:8000'
+                    args '-v $WORKSPACE/venv:/app/venv -p 8000:8000'
                 }
             }
             steps {
                 sh 'chmod +x ./jenkins/scripts/*'
+                sh 'ls -la ./venv'
+                sh './venv/bin/python --version'
                 sh './jenkins/scripts/deliver.sh'
                 echo 'Visit http://localhost:8000 to see your Flask application in action.'
                 echo 'Waiting for 60 seconds...'
